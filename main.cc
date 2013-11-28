@@ -3,17 +3,28 @@
 #include "being.h"
 #include "waddleblockus.h"
 
-void draw_being(Being being, sf::RenderWindow *window) {
+void draw_being(Being being, sf::Texture texture, sf::RenderWindow *window) {
     std::vector<Rectangle> worldBoxes = being.getPartWorldBoxes();
     for (int i = 0; i < worldBoxes.size(); i++) {
         int x = worldBoxes.at(i).x;
         int y = worldBoxes.at(i).y;
         int width = worldBoxes.at(i).width;
         int height = worldBoxes.at(i).height;
-        sf::RectangleShape shape(sf::Vector2f(width, height));
+        /*sf::RectangleShape shape(sf::Vector2f(width, height));
         shape.setPosition(sf::Vector2f(x, y));
-        shape.setFillColor(sf::Color(100, 250, 50));
-        (*window).draw(shape);
+        shape.setFillColor(sf::Color(52, 101, 36));
+        shape.setOutlineColor(sf::Color(117, 113, 97));
+        shape.setOutlineThickness(4);*/
+        sf::Sprite sprite;
+        sprite.setTexture(texture);
+        if (width == 16 && height == 16) {
+            sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+        } else if (width == 128 && height == 96) {
+            sprite.setTextureRect(sf::IntRect(0, 16, 128, 96));
+        }
+        sprite.setPosition(sf::Vector2f(x, y));
+        //(*window).draw(shape);
+        (*window).draw(sprite);
     }
 }
 
@@ -23,6 +34,12 @@ int main()
                       "Lobbit: Little Hunter of Big Things");
 
     WaddleBlockus waddler(10, 10);
+
+    sf::Texture body_parts_texture;
+    if (!body_parts_texture.loadFromFile("img/bodyparts.png"))
+    {
+        std::cout << "Error loading texture, dawg." << std::endl;
+    }
 
     sf::Clock clock;
 
@@ -45,7 +62,7 @@ int main()
 
         window.clear(sf::Color::Black);
 
-        draw_being(waddler, &window);
+        draw_being(waddler, body_parts_texture, &window);
 
         window.display();
     }
